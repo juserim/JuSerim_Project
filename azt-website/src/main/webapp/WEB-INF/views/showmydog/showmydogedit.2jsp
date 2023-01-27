@@ -1,0 +1,164 @@
+<%@page import="com.azt.dto.ShowMyDogBoardDto"%>
+<%@ page language="java" pageEncoding="utf-8" contentType="text/html; charset=utf-8" %>
+
+<% String appName = "azt-website"; %>
+
+<!DOCTYPE html>
+
+<!-- beautify ignore:start -->
+<html
+  lang="ko"
+  class="light-style layout-menu-fixed"
+  dir="ltr"
+  data-theme="theme-default"
+  data-assets-path="/<%= appName %>/static/assets/"
+  data-template="vertical-menu-template-free"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+
+    <title>Show My Dog Edit</title>
+
+    <meta name="description" content="" />
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/<%= appName %>/static/assets/img/favicon/favicon.ico" />
+
+    <jsp:include page="/WEB-INF/views/modules/common-css.jsp" />
+
+    <jsp:include page="/WEB-INF/views/modules/common-js-head.jsp" />
+    
+  
+
+   
+  </head>
+
+  <body>
+  
+    <!-- Layout wrapper -->
+    <div class="layout-wrapper layout-content-navbar">
+      <div class="layout-container">
+        
+        <jsp:include page="/WEB-INF/views/modules/layout-menu.jsp" />
+        
+        <!-- Layout container -->
+        <div class="layout-page">
+          
+          <jsp:include page="/WEB-INF/views/modules/layout-navbar.jsp" />
+          
+          <!-- Content wrapper -->
+          <div class="content-wrapper">
+            <!-- Content -->
+
+            <div class="container-xxl flex-grow-1 container-p-y">
+              <h3 class="fw-bold py-3 mb-4">글 수정</h3>
+
+              <!-- Basic Layout & Basic with Icons -->
+              <div class="row">
+                <!-- Basic Layout -->
+                <div class="col-xxl">
+                  <div class="card mb-4">
+                    <div class="card-header d-flex align-items-center justify-content-between">
+                      <h5 class="mb-0">내새끼 뽐내기</h5>                      
+                    </div>
+                    <div class="card-body">
+                      <form id="editform" action="showmydogedit.action" method="post">
+                       <% ShowMyDogBoardDto board = (ShowMyDogBoardDto)request.getAttribute("board"); %>
+                       <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-company">글번호</label>
+                          <div class="col-sm-10">
+                            <%= board.getBoardNo() %>
+                          </div>
+                        </div>		        
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-name">제목</label>
+                          <div class="col-sm-10">
+                          
+                            <input type="text" class="form-control" name="title" style="width:560px"
+		                    	   value="<%= board.getTitle() %>" />
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-company">작성자</label>
+                          <div class="col-sm-10">
+                            <%= board.getWriter() %>
+                          </div>
+                        </div>
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-email">첨부파일</label>
+                          <div class="col-sm-10">
+                            <div class="input-group input-group-merge">
+                              <input
+                                type="file"
+                                name="attach"
+                                class="form-control"
+                                placeholder="사진을 1장 이상 업로드 해주세요" />
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <div class="row mb-3">
+                          <label class="col-sm-2 col-form-label" for="basic-default-message">❤️내새끼 자랑하기❤️</label>
+                          <div class="col-sm-10">
+                            <textarea
+                              id="basic-default-message"
+                              class="form-control"
+                              style="resize: none"
+                              name="content" cols="76" rows="15"
+                            ><%= board.getContent().replace("\r\n", "<br>") %></textarea>
+                          </div>
+                        </div>    
+                        </form>
+                        </div>
+                       </div> 
+                    </div>
+                    </div>
+                  </div>                  
+                </div>
+                
+                <div class="col-sm-10"> 
+                <div style="text-align: center;">                   	
+                <a id="edit" href="javascript:"><button class="btn btn-warning" >수정완료</button></a>                
+                <a href="javascript:history.back()"><button type="submit" class="btn btn-danger" >취소</button></a>
+                </div>
+                </div>
+                
+            <!-- / Content -->
+
+     <!-- Footer -->
+      <jsp:include page="/WEB-INF/views/modules/footer.jsp" />
+     <!-- /Footer -->
+                
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="../assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="../assets/vendor/libs/popper/popper.js"></script>
+    <script src="../assets/vendor/js/bootstrap.js"></script>
+    <script src="../assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+
+    <script src="../assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="../assets/js/main.js"></script>
+
+    <!-- Page JS -->
+    <script type="text/javascript">
+	var editLink = document.querySelector("#edit");
+	editLink.addEventListener("click", function(event) {
+		event.preventDefault();
+		var editForm = document.querySelector("#editform");
+		editForm.submit(); // submit : form을 서버로 전송 (submit button click과 같은 효과)
+	});
+	</script>
+	
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+  </body>
+</html>

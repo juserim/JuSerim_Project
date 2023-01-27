@@ -1,0 +1,322 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema mydb
+-- -----------------------------------------------------
+-- -----------------------------------------------------
+-- Schema aztweb
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema aztweb
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `aztweb` ;
+USE `aztweb` ;
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`member`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`member` (
+  `memberid` VARCHAR(20) NOT NULL,
+  `passwd` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(50) NOT NULL,
+  `usertype` VARCHAR(50) NULL DEFAULT 'user',
+  `regdate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `active` TINYINT(4) NULL DEFAULT 1,
+  PRIMARY KEY (`memberid`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`dogbreedintro`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`dogbreedintro` (
+  `boardno` INT(11) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(100) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `readcount` INT(11) NOT NULL,
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  PRIMARY KEY (`boardno`),
+  INDEX `fk_board1_member_idx` (`writer` ASC) VISIBLE,
+  CONSTRAINT `fk_board1_member1`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`dogbreedintroattach`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`dogbreedintroattach` (
+  `attachno` INT(11) NOT NULL,
+  `userfilename` VARCHAR(100) NOT NULL,
+  `savedfilename` VARCHAR(100) NOT NULL,
+  `downloadcount` INT(11) NULL DEFAULT 0,
+  `boardno` INT(11) NOT NULL,
+  PRIMARY KEY (`attachno`),
+  INDEX `fk_dogbreedintroattach_dogbreedintro1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_dogbreedintroattach_dogbreedintro1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`dogbreedintro` (`boardno`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`dogbreedintrocomment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`dogbreedintrocomment` (
+  `commentno` INT(11) NOT NULL AUTO_INCREMENT,
+  `boardno` INT(11) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  `groupno` INT(11) NOT NULL,
+  `step` INT(11) NOT NULL,
+  `depth` INT(11) NOT NULL,
+  PRIMARY KEY (`commentno`),
+  INDEX `fk_hotplacecomment1_member1_idx` (`writer` ASC) VISIBLE,
+  INDEX `fk_dogbreedintrocomment_dogbreedintro1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_dogbreedintrocomment_dogbreedintro1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`dogbreedintro` (`boardno`),
+  CONSTRAINT `fk_hotplacecomment1_member12`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`dogmember`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`dogmember` (
+  `owner` VARCHAR(20) NOT NULL,
+  `dogname` VARCHAR(20) NOT NULL,
+  `breed` VARCHAR(20) NOT NULL,
+  `surgery` TINYINT(4) NOT NULL DEFAULT 1,
+  `loc` VARCHAR(100) NOT NULL,
+  `weight` INT(11) NOT NULL,
+  PRIMARY KEY (`owner`),
+  INDEX `fk_dogmember_member1_idx` (`owner` ASC) VISIBLE,
+  CONSTRAINT `fk_dogmember_member1`
+    FOREIGN KEY (`owner`)
+    REFERENCES `aztweb`.`member` (`memberid`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`hotplace`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`hotplace` (
+  `boardno` INT(11) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(100) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `place` VARCHAR(100) NOT NULL,
+  `loc` VARCHAR(100) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `readcount` INT(11) NOT NULL DEFAULT 0,
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  PRIMARY KEY (`boardno`),
+  INDEX `fk_board1_member_idx` (`writer` ASC) VISIBLE,
+  CONSTRAINT `fk_board1_member`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 13
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`hotplaceattach`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`hotplaceattach` (
+  `attachno` INT(11) NOT NULL AUTO_INCREMENT,
+  `userfilename` VARCHAR(100) NOT NULL,
+  `savedfilename` VARCHAR(100) NOT NULL,
+  `downloadcount` INT(11) NULL DEFAULT 0,
+  `boardno` INT(11) NOT NULL,
+  PRIMARY KEY (`attachno`),
+  INDEX `fk_hotplaceattach_hotplace1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_hotplaceattach_hotplace1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`hotplace` (`boardno`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 4
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`hotplacecomment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`hotplacecomment` (
+  `commentno` INT(11) NOT NULL AUTO_INCREMENT,
+  `boardno` INT(11) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  `groupno` INT(11) NOT NULL,
+  `step` INT(11) NOT NULL,
+  `depth` INT(11) NOT NULL,
+  PRIMARY KEY (`commentno`),
+  INDEX `fk_hotplacecomment1_member1_idx` (`writer` ASC) VISIBLE,
+  INDEX `fk_hotplacecomment1_hotplace1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_hotplacecomment1_hotplace1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`hotplace` (`boardno`),
+  CONSTRAINT `fk_hotplacecomment1_member1`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`showmydog`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`showmydog` (
+  `boardno` INT(11) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(100) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `readcount` INT(11) NULL DEFAULT NULL,
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  PRIMARY KEY (`boardno`),
+  INDEX `fk_board1_member_idx` (`writer` ASC) VISIBLE,
+  CONSTRAINT `fk_board1_member2`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 6
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`showmydogattach`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`showmydogattach` (
+  `attachno` INT(11) NOT NULL,
+  `userfilename` VARCHAR(100) NOT NULL,
+  `savedfilename` VARCHAR(100) NOT NULL,
+  `downloadcount` INT(11) NULL DEFAULT 0,
+  `boardno` INT(11) NOT NULL,
+  PRIMARY KEY (`attachno`),
+  INDEX `fk_showmydogattach_showmydog1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_showmydogattach_showmydog1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`showmydog` (`boardno`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`showmydogcomment`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`showmydogcomment` (
+  `commentno` INT(11) NOT NULL AUTO_INCREMENT,
+  `boardno` INT(11) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  `groupno` INT(11) NOT NULL,
+  `step` INT(11) NOT NULL,
+  `depth` INT(11) NOT NULL,
+  PRIMARY KEY (`commentno`),
+  INDEX `fk_hotplacecomment1_member1_idx` (`writer` ASC) VISIBLE,
+  INDEX `fk_showmydogcomment_showmydog1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_hotplacecomment1_member10`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`),
+  CONSTRAINT `fk_showmydogcomment_showmydog1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`showmydog` (`boardno`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`walktogether`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`walktogether` (
+  `boardno` INT(11) NOT NULL AUTO_INCREMENT,
+  `title` VARCHAR(100) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `dogname` VARCHAR(20) NOT NULL,
+  `breed` VARCHAR(20) NOT NULL,
+  `weight` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `location` VARCHAR(20) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `readcount` INT(11) NOT NULL DEFAULT 0,
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  PRIMARY KEY (`boardno`),
+  INDEX `fk_board1_member_idx` (`writer` ASC) VISIBLE,
+  CONSTRAINT `fk_board1_member0`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`))
+ENGINE = InnoDB
+AUTO_INCREMENT = 7
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`walktogetherattach`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`walktogetherattach` (
+  `attachno` INT(11) NOT NULL,
+  `userfilename` VARCHAR(100) NOT NULL,
+  `savedfilename` VARCHAR(100) NOT NULL,
+  `downloadcount` INT(11) NULL DEFAULT 0,
+  `boardno` INT(11) NOT NULL,
+  PRIMARY KEY (`attachno`),
+  INDEX `fk_walktogetherattach_walktogether1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_walktogetherattach_walktogether1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`walktogether` (`boardno`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+-- -----------------------------------------------------
+-- Table `aztweb`.`walktogethercommenet`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `aztweb`.`walktogethercommenet` (
+  `commentno` INT(11) NOT NULL AUTO_INCREMENT,
+  `boardno` INT(11) NOT NULL,
+  `writer` VARCHAR(20) NOT NULL,
+  `content` VARCHAR(4000) NOT NULL,
+  `writedate` DATETIME NULL DEFAULT CURRENT_TIMESTAMP(),
+  `deleted` TINYINT(4) NULL DEFAULT 0,
+  `groupno` INT(11) NOT NULL,
+  `step` INT(11) NOT NULL,
+  `depth` INT(11) NOT NULL,
+  PRIMARY KEY (`commentno`),
+  INDEX `fk_hotplacecomment1_member1_idx` (`writer` ASC) VISIBLE,
+  INDEX `fk_walktogethercommenet_walktogether1_idx` (`boardno` ASC) VISIBLE,
+  CONSTRAINT `fk_hotplacecomment1_member11`
+    FOREIGN KEY (`writer`)
+    REFERENCES `aztweb`.`member` (`memberid`),
+  CONSTRAINT `fk_walktogethercommenet_walktogether1`
+    FOREIGN KEY (`boardno`)
+    REFERENCES `aztweb`.`walktogether` (`boardno`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb3;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
