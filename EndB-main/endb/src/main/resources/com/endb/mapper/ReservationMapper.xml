@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  
+<mapper namespace="com.endb.mapper.ReservationMapper">
+ 
+ <resultMap type="Reservation" id="reservationResultMap">
+		<id column="RESERVATION_NUMBER" property="reservationNumber" />
+		<result column="DATE_FORMAT(check_in, '%Y-%m-%d')" property="checkIn" />
+		<result column="DATE_FORMAT(check_out, '%Y-%m-%d')" property="checkOut" />
+		<result column="room_id" property="roomId" />
+		<result column="adult" property="adult" />
+		<result column="kid" property="kid" />
+		<result column="price" property="price" />
+		<result column="user_no" property="userNo" />
+	</resultMap>
+	<resultMap type="Check" id="checkResultMap">
+		<result column="date_format(DATE_SUB(check_in, INTERVAL 1 MONTH),'%Y,%m,%d')" property="checkIn" />
+		<result column="date_format(DATE_SUB(check_out, INTERVAL 1 MONTH),'%Y,%m,%d')" property="checkOut" />
+	</resultMap>
+	 <insert id="reservation_number_people" parameterType="Reservation">
+		INSERT INTO	reservation
+		(room_id,adult,kid)
+		VALUES(,#{roomId},#{adult},#{kid})
+	</insert>
+	<select id="RoomPrice" parameterType="int"
+		resultType="int">
+		SELECT price
+		FROM room
+		WHERE room_id=#{roomId}
+	</select>
+
+	<insert id="reservationInsert" parameterType="Reservation">
+		INSERT INTO	reservation
+		(user_no,room_id,check_in,check_out,adult,kid,price)
+		VALUES
+		(#{userNo},#{roomId},#{checkIn},#{checkOut},#{adult},#{kid},#{price})
+	</insert>
+
+	<select id="DuplicateFind" resultType="Int" parameterType="Reservation">
+		SELECT count(*) FROM reservation r JOIN reservation_number_people p
+		ON
+		r.reservation_number = p.reservation_number
+		WHERE
+		room_id IN(#{roomId})
+		AND
+		( #{checkIn} BETWEEN check_in AND check_out
+		OR
+		#{checkOut} BETWEEN check_in AND check_out);
+	</select>
+	
+	<select id="PayCheck" parameterType="Int" resultType="String" >
+      SELECT confirmation_payment 
+      FROM reservation 
+      WHERE user_no=#{userNo}
+	</select>
+	
+	<update id="PayCheckUpdate" parameterType="Int">
+	UPDATE reservation 
+	  SET confirmation_payment = 1 
+	 WHERE reservation_number=#{reservationNumber}
+	</update>
+		
+	<delete id="ReservationDelete">
+		 DELETE
+		  FROM 
+		 reservation_number_people
+		</delete>
+		
+		<select id="ReservationSelect" resultMap="reservationResultMap" parameterType="int">
+		SELECT reservation_number,DATE_FORMAT(check_in, '%Y-%m-%d'),
+		DATE_FORMAT(check_out, '%Y-%m-%d'),room_id,adult,kid,price
+		FROM reservation 
+		WHERE user_no = #{userNo}
+		</select>
+		
+		<select id="findAll" parameterType="int" resultType="Room">
+		SELECT r.room_id,r.title,r.user_no,r.price,r.people_num,b.savedfilename,b.userfilename
+		FROM room r, boardattach b
+		where r.room_id = b.room_id and r.room_id = #{roomId}
+	</select> 
+	<select id="ReservationSelectByRoomId" resultMap="checkResultMap" parameterType="int">
+		SELECT date_format(DATE_SUB(check_in, INTERVAL 1 MONTH),'%Y,%m,%d'),
+			   date_format(DATE_SUB(check_out, INTERVAL 1 MONTH),'%Y,%m,%d'),room_id
+		FROM reservation 
+		WHERE room_id = #{roomId}
+		</select>
+	
+</mapper>

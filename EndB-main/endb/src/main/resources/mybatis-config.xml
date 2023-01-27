@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" 
+					    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<typeAliases>
+		<typeAlias type="com.endb.dto.User" alias="User" />
+		<typeAlias type="com.endb.dto.Reservation" alias="Reservation" />
+		<typeAlias type="com.endb.dto.Check" alias="Check" />
+		<typeAlias type="com.endb.dto.BoardComment" alias="BoardComment" />
+		<typeAlias type="com.endb.dto.Board" alias="Board" />
+		<typeAlias type="com.endb.dto.Room" alias="Room" />
+		<typeAlias type="com.endb.dto.Comment" alias="Comment" />
+		<typeAlias type="com.endb.dto.BoardAttach" alias="BoardAttach" />
+		<typeAlias type="com.endb.dto.Message" alias="Message"/>
+	</typeAliases>
+
+
+	<mappers>
+		<mapper resource="com/endb/mapper/UserMapper.xml" />
+		<mapper resource="com/endb/mapper/ReservationMapper.xml" />
+		<mapper resource="com/endb/mapper/BoardMapper.xml" />
+		<mapper resource="com/endb/mapper/MypageMapper.xml" />
+	</mappers>
+
+
+</configuration>
