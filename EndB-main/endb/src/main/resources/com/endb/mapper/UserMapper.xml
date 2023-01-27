@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+				 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.endb.mapper.UserMapper">
+	<!-- 전영후 -->
+	<sql id="userBasicColumns">id, passwd, name, birth, email</sql>
+	<resultMap type="User" id="userResultMap">
+		<id column="user_no" property="userNo" />
+		<result column="id" property="userId" />
+		<result column="passwd" property="passwd" />
+		<result column="name" property="name" />
+		<result column="birth" property="birth" />
+		<result column="email" property="email" />
+		<result column="savedfilename" property="savedFileName" />
+		<result column="userfilename" property="userFileName" />
+	</resultMap>
+	<insert id="insertUser" parameterType="User">
+		INSERT INTO user(
+		<include refid="userBasicColumns" />
+		)
+		VALUES (#{userId}, #{passwd}, #{name}, #{birth}, #{email})
+	</insert>
+	<select id="login" parameterType="User"
+		resultMap="userResultMap">
+		SELECT *FROM user WHERE id = #{userId} AND passwd =
+		#{passwd}
+	</select>
+	<update id="editInfo" parameterType="User">
+		UPDATE user SET name =
+		#{name}, email = #{email},
+		birth = #{birth}, savedfilename =
+		#{savedFileName}, userfilename =
+		#{userFileName} WHERE user_no =
+		#{userNo}
+	</update>
+	<select id="findUserInfo" parameterType="Int"
+		resultMap="userResultMap">
+		SELECT *FROM user WHERE user_no = #{userNo}
+	</select>
+	<delete id="userDelete" parameterType="Int">
+		DELETE FROM user WHERE
+		user_no = #{userNo}
+	</delete>
+	<select id="checkId" parameterType="String" resultType="Int">
+		SELECT count(*)FROM user WHERE id = #{checkId}
+	</select>
+
+</mapper>

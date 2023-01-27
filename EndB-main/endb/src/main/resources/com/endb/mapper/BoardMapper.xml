@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+				 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+              <!-- package..class로 가정하고 사용 -->				 
+<mapper namespace="com.endb.mapper.BoardMapper">
+
+	<select id="selectAll" resultType="Room">
+		SELECT room_id, title, user_no, deleted
+		FROM room
+		ORDER BY room_id DESC
+	</select>
+	
+	<select id="selectByRange" parameterType="hashmap" resultType="Room">
+		SELECT r.room_id,r.title,r.user_no,r.deleted,b.savedfilename,b.userfilename
+		FROM room r
+		left join boardattach b on r.room_id = b.room_id
+		ORDER BY room_id DESC
+
+			LIMIT #{from}, #{count}
+	</select>
+	
+	<select id="selectBoardCount" resultType="int">
+		SELECT COUNT(*) FROM room
+	</select>
+
+	<insert id="insertReview" parameterType="BoardComment">
+		INSERT review (room_id, user_no, content)
+		VALUES (#{boardno}, #{writer}, #{content})
+	</insert>
+	<insert id="insertBoard" parameterType="Room">
+		<selectKey keyProperty="room_id" resultType="int" order="AFTER">
+			SELECT LAST_INSERT_ID()
+		</selectKey>
+		INSERT INTO room (title, user_no, content,deleted)
+		VALUES (#{title}, #{user_no}, #{content},FALSE)
+	</insert>
+	<insert id="insertBoardAttach" parameterType="BoardAttach">
+		INSERT boardattach (room_id, userfilename, savedfilename)
+		VALUES (#{roomId}, #{userFileName}, #{savedFileName})
+	</insert>
+	
+	<select id="selectByBoardNo" parameterType="int" resultType="Room">
+		SELECT r.room_id, r.title, u.id, content
+		FROM room r
+		left join user u on r.user_no = u.user_no
+		WHERE room_id = #{room_Id} AND deleted = FALSE
+	</select>
+	
+	<select id="selectBoardAttachByBoardNo" parameterType="int"
+											resultType="BoardAttach">
+		SELECT attachno, userfilename, savedfilename, downloadcount
+		FROM boardattach
+		WHERE room_id = #{Room_id}
+	</select>
+	
+	<!-- <update id="updateBoardReadCount" parameterType="int">
+		UPDATE Room 
+		SET readcount = readcount + 1 
+		WHERE boardno = #{boardNo}
+	</update> -->
+
+	<select id="selectBoardAttachByAttachNo" parameterType="int" 
+											 resultType="BoardAttach">
+		SELECT attachno, boardno, userfilename, savedfilename, downloadcount
+		FROM boardattach
+		WHERE attachno = #{attachNo}
+	</select>
+
+	<select id="selectBoardComments" parameterType="int"
+			resultType="Comment">
+		SELECT r.board_no,u.id,r.content,r.room_id
+		FROM review r
+		left join user u on r.user_no=u.user_no
+		WHERE room_id = #{Room_id}
+	</select>
+	
+	<delete id="delete" parameterType="int">
+		delete from room
+		WHERE room_id = #{room_Id}
+	</delete>
+
+
+	<delete id="deleteComment" parameterType="int">
+		delete from review
+		WHERE board_no = #{commentNo}
+	</delete>
+	
+	<update id="update" parameterType="Room">
+		UPDATE room
+		SET title = #{title}, content = #{content}
+		WHERE room_id = #{room_id}
+	</update>
+
+	<update id="updateComment" parameterType="BoardComment">
+		UPDATE review
+		SET content = #{content}
+		WHERE board_no = #{commentNo}
+	</update>
+
+
+
+	
+	
+	
+
+</mapper>

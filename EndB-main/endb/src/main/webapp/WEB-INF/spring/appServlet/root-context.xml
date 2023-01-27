@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context https://www.springframework.org/schema/context/spring-context.xsd
+		http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd">
+	<!-- !!이거 건들지말고 복사한 다음에 새로 만들기!! -->
+	<import resource="root-context-account.xml"/>
+	<import resource="root-context-board.xml"/>
+	<import resource="root-context-message.xml"/>
+	<import resource="root-context-mypage.xml"/>
+	<import resource="root-context-reservation.xml"/>   
+	
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="com.mysql.cj.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://3.34.197.123:3306/EndB" />
+		<property name="username" value="EndB" />
+		<property name="password" value="EndB" />
+		<property name="maxTotal" value="20" />
+		<property name="maxIdle" value="10" />
+		<property name="maxWaitMillis" value="-1" />
+	</bean>
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation"
+			value="classpath:mybatis-config.xml" />
+	</bean>
+	<bean id="sqlSessionTemplate"
+		class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	<mybatis:scan base-package="com.endb.mapper" />
+
+
+</beans>

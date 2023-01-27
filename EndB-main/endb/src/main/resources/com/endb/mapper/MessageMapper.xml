@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+                 
+<mapper namespace="com.endb.mapper.MessageMapper">
+
+
+       <select id="selectAll" resultType="Message">
+            SELECT messageno, title, content, senddate, receivedate, sender, receiver
+            FROM Message
+            ORDER BY messageno DESC
+       </select>
+       
+       <select id="selectByRange" parameterType="hashmap" resultType="Message">
+            SELECT 
+            	m.messageno, m.title, m.content, m.senddate, m.receivedate, m.sender, m.receiver
+            FROM Message m
+            where receiver = #{ userNo }
+            ORDER BY messageno DESC
+            LIMIT #{from}, #{count}
+       </select>
+       <select id="selectByRange2" parameterType="hashmap" resultType="Message">
+            SELECT 
+            	m.messageno, m.title, m.content, m.senddate, m.receivedate, m.sender, m.receiver
+            FROM Message m
+            where sender = #{ userNo }
+            ORDER BY messageno DESC
+            LIMIT #{from}, #{count}
+       </select>
+       
+       <select id="selectMessageCount" parameterType="int" resultType="int">
+             SELECT COUNT(*) FROM Message WHERE receiver = #{ userNo }
+       </select>
+       
+       <insert id="insertMessage" parameterType="Message"
+               useGeneratedKeys="true" keyColumn="messageno" keyProperty="messageNo">
+         INSERT INTO Message( sender, receiver, title, content)
+         VALUES ( #{sender}, #{receiver}, #{title}, #{content})     
+       </insert>
+       
+        <insert id="insertReplyMessage" parameterType="Message"
+               useGeneratedKeys="true" keyColumn="messageno" keyProperty="messageNo">
+         INSERT INTO Message( receiver, sender, title, content)
+         VALUES (  #{receiver}, #{sender}, #{title}, #{content})     
+       </insert>
+       
+       
+
+      <!-- <insert id="insertMessage" parameterType="Message">
+               <selectKey keyProperty="messageno" resultType="int" order="AFTER">
+               SELECT LAST_INSERT_ID()
+               </selectKey>
+         INSERT INTO message (sender, receiver, title, content)
+         VALUES (#{sender}, #{receiver}, #{title}, #{content}) 
+        </insert>-->
+        
+        <select id="selectUserId" resultType="User">
+             SELECT id userId, user_no userNo FROM user
+        </select>
+     
+       <select id="selectByMessageNo" parameterType="int" resultType="Message">
+       SELECT m.messageno, m.title, m.content, m.sendDate, sender, receiver,
+        	  (select u1.id from user u1 where u1.user_no = m.sender) senderId,
+              (select u2.id from user u2 where u2.user_no = m.receiver) receiverId
+       FROM Message m
+       WHERE m.messageno = #{messageNo}
+       </select>
+
+       <delete id="delete" parameterType="int">
+                DELETE FROM Message
+                WHERE messageno = #{messageNo}
+       
+       </delete>
+       
+       <update id="update" parameterType="Message">
+       UPDATE message
+       SET title  #{title}, content = #{content}
+       WHERE messageno = #{messageNo}
+       
+       </update>
+
+
+
+
+</mapper>                 
